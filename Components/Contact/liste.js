@@ -4,15 +4,18 @@ import {styles} from './styles'
 import ContactItem from './contactItem';
 import { useSelector, useDispatch } from 'react-redux';
 
+
 const Liste = () => {
 
   const {contacts} = useSelector(state => state)
+  
 
   return (
     
     <FlatList
         data={contacts}
-        renderItem={ContactItem}
+        ListEmptyComponent={() => <Text>Vous n'avez pas de contacts</Text>}
+        renderItem={({item}) => <ContactItem item={item} />}
         keyExtractor={item => item.id}
     />
     

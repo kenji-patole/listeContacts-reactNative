@@ -8,12 +8,15 @@ class Firebase {
     constructor() {
 
         this.auth = auth;
-        this.firestore = firestore;
+        this.db = firestore();
         this.storage = storage;
     }
 
     // ALL QUERY
-
+    queryContact = firestore().collection("contacts");
+    queryAllContact = this.queryContact.orderBy('name', 'asc');
+    queryAddContact = (contact) => this.queryContact.add(contact);
+    queryDeleteContact = (id) => this.queryContact.doc(id).delete();
 
 
 }

@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Button, Overlay, Input, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { afficheModal } from '../../Redux/Actions/modal';
 import { addContact } from '../../Redux/Actions/contact'
+import { FirebaseContext } from '../../FirebaseContext'
 
 const index = () => {
+
+    const {queryAddContact} = useContext(FirebaseContext)
 
     const {modal, contacts} = useSelector(state => state)
     const dispatch = useDispatch()
@@ -25,17 +28,17 @@ const index = () => {
 
     const saveName = () => {
         
-       dispatch(addContact(
+        queryAddContact(
 
-        {   
-            id:contacts.length + 1,
-            name,
-            avatar_url: 'https://icon-library.net/images/anonymous-avatar-icon/anonymous-avatar-icon-10.jpg',
-            subtitle: 'nc'
-        },
+            {   
+            
+                name,
+                avatar_url: 'https://icon-library.net/images/anonymous-avatar-icon/anonymous-avatar-icon-10.jpg',
+                subtitle: 'nc'
+            },
 
 
-       )) 
+       );
 
        toggleOverlay()
 

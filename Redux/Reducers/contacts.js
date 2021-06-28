@@ -1,4 +1,4 @@
-import { ADD_CONTACT } from "../Actions/types";
+import { ADD_CONTACT, DEL_CONTACT } from "../Actions/types";
 
 const initStateContact = []
 
@@ -9,6 +9,13 @@ const contacts = (state = initStateContact, action) => {
 
         case ADD_CONTACT:
             return [...state, action.payload];
+            break;
+        
+        case DEL_CONTACT:
+           const newContacts = state.filter(contact => contact.id != action.payload)
+            return newContacts 
+            
+            // return action.payload;
             break;
     
         default:
