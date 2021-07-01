@@ -1,73 +1,57 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, StatusBar } from 'react-native'
-import Header from './Components/Header';
-import Contact from './Components/Contact';
-import SpeedDial from './Components/SpeedDial';
-import Modal from './Components/Modal';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+
 import { FirebaseContext } from './FirebaseContext';
-import { addContact, delContact } from './Redux/Actions/contact'
-import { useDispatch } from 'react-redux';
 
 
-const initContacts = (queryAllContact, dispatch) => {
+import Login from './Components/Login';
+import Register from './Components/Register';
+import Secure from './Components/Secure';
 
-  return queryAllContact.onSnapshot(snapshot => {
-
-    snapshot.docChanges().forEach((change) => {
-      
-        if (change.type === "added") {
-          dispatch(
-            addContact({
-              id:change.doc.id, ...change.doc.data()
-            })
-          )
-        }
-        
-        if (change.type === "modified") {
-            console.log("Modified city: ");
-        }
-        if (change.type === "removed") {
-
-          dispatch(delContact(change.doc.id))
-          
-        }
-
-    });
-   
-  })
-}
+const Stack = createStackNavigator();
 
 
-const App = () => {
+const  App = () => {
 
-  const {queryAllContact} = useContext(FirebaseContext);
-  console.log(queryAllContact)
+  const {auth} = useContext(FirebaseContext)
+  const [user, setUser] = useState(null)
 
+  useEffect(() => {
 
-  const dispatch = useDispatch()
+    const authChange = auth.onAuthStateChanged(userAuth => {
 
-  useEffect(() => { 
-    // INIT CONTACT
-    const unSubContacts = initContacts(queryAllContact, dispatch)
+        setUser(userAuth)
+        console.log("user :", userAuth)
+    })
+
 
     return () => {
-      // unSub Init Contact
-      unSubContacts
-
+      authChange
     }
 
   }, [])
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header/>
-      <Contact/>
-      <SpeedDial/>
-      <Modal/>
+    <NavigationContainer>
+      
+        { 
+          user ? <>
+          <Secure/>
+          </>
+          :
+          <Stack.Navigator>
+            <Stack.Screen name="Login" component={Login} /> 
+            <Stack.Screen name="Register" component={Register} /> 
+          </Stack.Navigator>
+        }
+      
+    </NavigationContainer>
+  );
 
-    </SafeAreaView>
-  )
 }
 
 

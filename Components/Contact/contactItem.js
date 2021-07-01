@@ -1,31 +1,79 @@
-import React, {useContext} from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, {useContext, useState} from 'react'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { ListItem, Avatar, Button } from 'react-native-elements'
 import { FirebaseContext } from '../../FirebaseContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { delContact } from '../../Redux/Actions/contact';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 
 
 
-const ContactItem = ({item}) => {
+const ContactItem = ({navigation, item}) => {
 
-    const {queryDeleteContact} = useContext(FirebaseContext)
+    const {queryDeleteContact, queryUpdateContact, storageImg, storageGetImg} = useContext(FirebaseContext)
 
     const {contacts} = useSelector(state => state)
     const dispatch = useDispatch()
 
+    const [loadingImg, setLoadingImg] = useState(false)
+    
+    const color = item.favoris === true ? 'red': '#00aced';
 
     const supprimer = (id) => {
-        console.log("delete", id)
-
         queryDeleteContact(id);
-
     }
+
+    const favoris = () => {
+        console.log('favoris', item.id)
+
+        queryUpdateContact(item.id, {favoris:!item.favoris})  
+    }
+
+    const editImg = () => {
+        
+        console.log("editImg", item.id) 
+
+        let options = {
+            storageOptions: {
+              skipBackup: true,
+              path: 'images',
+            },
+        };
+
+        launchCamera(options, (response) => {
+            console.log('Response = ', response);
+
+            if(response.assets != undefined) {
+                // BLOC D'INSTRUCTIONS
+                setLoadingImg(true)
+
+                const {uri} = response.assets[0];
+                console.log("uri =", uri)
+
+                storageImg(item.id, "dope.jpg", uri).then(res => {
+                    console.log(res)
+                    storageGetImg(item.id, "dope.jpg").then(url => {
+                        queryUpdateContact(item.id, {
+                            avatar_url: url
+                        })
+                        setLoadingImg(false)
+                    })
+                })
+
+                
+            }
+
+        })
+        
+    }
+    
 
    
     return (
         <ListItem.Swipeable 
+            onPress={() => navigation.navigate('Detail')}
             rightContent={
             <Button
               title="Delete"
@@ -36,11 +84,25 @@ const ContactItem = ({item}) => {
           }
         
         bottomDivider>
-            <Avatar source={{uri: item.avatar_url}} />
+           
+                {
+                    loadingImg ? <ActivityIndicator size="large" color="red" /> :  
+                    <Avatar 
+                        source={{uri: item.avatar_url}}
+                        onPress={editImg} 
+                    />
+                }
+
             <ListItem.Content>
                 <ListItem.Title>{item.name}</ListItem.Title>
                 <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
             </ListItem.Content>
+            <Icon 
+                name="star"
+                onPress={favoris}
+                color={color}
+                size={30}
+            />
         </ListItem.Swipeable>
     )
 }
