@@ -7,10 +7,12 @@ import { delContact } from '../../Redux/Actions/contact';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
+import { useNavigation } from '@react-navigation/native';
 
 
 
-const ContactItem = ({navigation, item}) => {
+
+const ContactItem = ({item}) => {
 
     const {queryDeleteContact, queryUpdateContact, storageImg, storageGetImg} = useContext(FirebaseContext)
 
@@ -18,7 +20,9 @@ const ContactItem = ({navigation, item}) => {
     const dispatch = useDispatch()
 
     const [loadingImg, setLoadingImg] = useState(false)
-    
+
+    const navigation = useNavigation()
+
     const color = item.favoris === true ? 'red': '#00aced';
 
     const supprimer = (id) => {
@@ -73,7 +77,7 @@ const ContactItem = ({navigation, item}) => {
    
     return (
         <ListItem.Swipeable 
-            onPress={() => navigation.navigate('Detail')}
+            onPress={() => navigation.navigate('Detail', {id:item.id})}
             rightContent={
             <Button
               title="Delete"

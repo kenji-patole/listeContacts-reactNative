@@ -11,6 +11,7 @@ import Login from './Components/Login';
 import Register from './Components/Register';
 import Secure from './Components/Secure';
 
+
 const Stack = createStackNavigator();
 
 
@@ -18,8 +19,12 @@ const  App = () => {
 
   const {auth} = useContext(FirebaseContext)
   const [user, setUser] = useState(null)
+  
+
 
   useEffect(() => {
+
+    // dispatch(addNavigation())
 
     const authChange = auth.onAuthStateChanged(userAuth => {
 

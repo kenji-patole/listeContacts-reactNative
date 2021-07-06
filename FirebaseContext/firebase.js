@@ -15,6 +15,7 @@ class Firebase {
 
     // ALL QUERY
     queryContact = firestore().collection("contacts");
+    queryOneContact = (id) => firestore().collection("contacts").doc(id).get()
     queryAllContact = this.queryContact.orderBy('name', 'asc');
     queryAddContact = (contact) => this.queryContact.add(contact);
     queryDeleteContact = (id) => this.queryContact.doc(id).delete();
@@ -24,8 +25,10 @@ class Firebase {
     storageGetImg = (id, name) => storage().ref(`images/${id}/${name}`).getDownloadURL()
 
     queryUsers = firestore().collection("users");
-    queryAddUser =(id, data) => firestore().collection("users").doc(id).set(data);
+    queryAddUser = (id, data) => firestore().collection("users").doc(id).set(data);
     queryUpdateUser =(id, data) => firestore().collection("users").doc(id).update(data);
+
+    
 
 
 }

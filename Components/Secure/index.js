@@ -53,7 +53,7 @@ const initContacts = (queryAllContact, dispatch) => {
 }
 
 
-const Home = ({navigation}) => {
+const Home = () => {
 
   const {queryAllContact} = useContext(FirebaseContext);
   console.log(queryAllContact)
@@ -91,7 +91,7 @@ const HomeStack = createStackNavigator();
 const HomeStackScreen = () => {
 
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator screenOptions={{headerShown:false}}>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="Detail" component={Detail} />
     </HomeStack.Navigator>
